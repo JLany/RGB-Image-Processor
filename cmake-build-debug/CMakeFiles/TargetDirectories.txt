@@ -1,0 +1,3 @@
+C:/Users/Kilany/Desktop/My Projects/RGB-Image-Processor/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+C:/Users/Kilany/Desktop/My Projects/RGB-Image-Processor/cmake-build-debug/CMakeFiles/RGB_Image_Processor.dir
+C:/Users/Kilany/Desktop/My Projects/RGB-Image-Processor/cmake-build-debug/CMakeFiles/edit_cache.dir
