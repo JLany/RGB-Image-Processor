@@ -14,11 +14,13 @@ void writeImage();
 
 void invertFilter();        // 2
 void rotateFilter();        // 5
+void enlargeFilter();       // 8
 
 
 
 
 void rotate90();
+void extractQuarter(unsigned char ** &, char);
 
 
 int main() {
@@ -36,7 +38,11 @@ int main() {
                 printf("Image inverted.\n");
                 break;
             case '5':
-                rotate90();
+                rotateFilter();
+                break;
+            case '8':
+                enlargeFilter();
+                printf("Image enlarged.\n");
                 break;
             case 's':
                 writeImage();
@@ -111,6 +117,65 @@ void rotate90() {
             for (int k = 0; k < RGB; k++) {
                 img[j][i][k] = tempImg[i][j][k];
             }
+        }
+    }
+}
+
+
+void enlargeFilter() {
+    char quarter;
+    unsigned char **pQuarter;
+    int quarterSize = SIZE * SIZE / 4;
+    pQuarter = new unsigned char * [quarterSize];
+    for (int i = 0; i < quarterSize; i++) {
+        pQuarter[i] = new unsigned char[RGB];
+    }
+    printf("Which quarter to enlarge 1, 2, 3 or 4?\n");
+    cin >> quarter;
+    extractQuarter(pQuarter, quarter);
+    int s = 0;
+    for (int i = 0; i < SIZE; i += 2) {
+        for (int j = 0; j < SIZE; j += 2) {
+            for (int k = 0; k < RGB; k++) {
+                img[i][j][k] = pQuarter[s][k];
+                img[i + 1][j][k] = pQuarter[s][k];
+                img[i][j + 1][k] = pQuarter[s][k];
+                img[i + 1][j + 1][k] = pQuarter[s][k];
+            }
+            s++;
+        }
+    }
+}
+
+
+void extractQuarter(unsigned char ** &ptr, char quarter) {
+    int startRow = 0, endRow = SIZE / 2, startCol = 0, endCol = SIZE / 2;
+    switch (quarter) {
+        case '1':
+            break;
+        case '2':
+            startCol = SIZE / 2;
+            endCol = SIZE;
+            break;
+        case '3':
+            startRow = SIZE / 2;
+            endRow = SIZE;
+            break;
+        case '4':
+            startRow = SIZE / 2;
+            endRow = SIZE;
+            startCol = SIZE / 2;
+            endCol = SIZE;
+            break;
+        default: printf("Unrecognized Quarter!");
+    }
+    int s = 0;
+    for (int i = startRow; i < endRow; i++) {
+        for (int j = startCol; j < endCol; j++) {
+            for (int k = 0; k < RGB; k++) {
+                ptr[s][k] = img[i][j][k];
+            }
+            s++;
         }
     }
 }
