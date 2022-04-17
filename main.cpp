@@ -3,6 +3,7 @@
 #include <cstring>
 #include <algorithm>
 #include "bmplib.cpp"
+#include <cmath>
 
 using namespace std;
 
@@ -15,6 +16,7 @@ void writeImage();
 void invertFilter();        // 2
 void rotateFilter();        // 5
 void enlargeFilter();       // 8
+void shuffleFilter();       // b
 
 
 
@@ -43,6 +45,10 @@ int main() {
             case '8':
                 enlargeFilter();
                 printf("Image enlarged.\n");
+                break;
+            case 'b':
+                shuffleFilter();
+                printf("Image shuffled.\n");
                 break;
             case 's':
                 writeImage();
@@ -125,7 +131,7 @@ void rotate90() {
 void enlargeFilter() {
     char quarter;
     int quarterSize = SIZE * SIZE / 4;
-    unsigned char * *pQuarter;
+    unsigned char * * pQuarter;
     pQuarter = new unsigned char * [quarterSize];
     for (int i = 0; i < quarterSize; i++) {
         pQuarter[i] = new unsigned char[RGB];
@@ -133,16 +139,16 @@ void enlargeFilter() {
     printf("Which quarter to enlarge 1, 2, 3 or 4?\n");
     cin >> quarter;
     extractQuarter(pQuarter, quarter);
-    int s = 0;
+    int pxl = 0;
     for (int i = 0; i < SIZE; i += 2) {
         for (int j = 0; j < SIZE; j += 2) {
-            for (int k = 0; k < RGB; k++) {
-                img[i][j][k] = pQuarter[s][k];
-                img[i + 1][j][k] = pQuarter[s][k];
-                img[i][j + 1][k] = pQuarter[s][k];
-                img[i + 1][j + 1][k] = pQuarter[s][k];
+            for (int rgb = 0; rgb < RGB; rgb++) {
+                img[i][j][rgb] = pQuarter[pxl][rgb];
+                img[i + 1][j][rgb] = pQuarter[pxl][rgb];
+                img[i][j + 1][rgb] = pQuarter[pxl][rgb];
+                img[i + 1][j + 1][rgb] = pQuarter[pxl][rgb];
             }
-            s++;
+            pxl++;
         }
     }
     delete[] pQuarter;
@@ -170,13 +176,75 @@ void extractQuarter(unsigned char * * &ptr, char quarter) {
             break;
         default: printf("Unrecognized Quarter!");
     }
-    int s = 0;
+    int pxl = 0;
     for (int i = startRow; i < endRow; i++) {
         for (int j = startCol; j < endCol; j++) {
-            for (int k = 0; k < RGB; k++) {
-                ptr[s][k] = img[i][j][k];
+            for (int rgb = 0; rgb < RGB; rgb++) {
+                ptr[pxl][rgb] = img[i][j][rgb];
             }
-            s++;
+            pxl++;
         }
+    }
+}
+
+
+void shuffleFilter() {
+    int quarterSize = SIZE * SIZE / 4;
+    int qrtr;
+    string newOrder;
+    unsigned char * * * pTemp;
+    pTemp = new unsigned char * * [4];
+    for (int i = 0; i < 4; i++) {
+        pTemp[i] = new unsigned char * [quarterSize];
+        for (int j = 0; j < quarterSize; j++) {
+            pTemp[i][j] = new unsigned char [RGB];
+        }
+    }
+
+    unsigned char * * pQuarter;
+    pQuarter = new unsigned char * [quarterSize];
+    for (int i = 0; i < quarterSize; i++) {
+        pQuarter[i] = new unsigned char[RGB];
+    }
+
+    printf("New order of quarters ?\n");
+    cin.ignore();
+    getline(cin, newOrder);
+
+    qrtr = 0;
+    for (int i = 0; i < newOrder.length(); i++) {
+        if (newOrder[i] == ' ') {
+            continue;
+        }
+        extractQuarter(pQuarter, newOrder[i]);
+        for (int pxl = 0; pxl < quarterSize; pxl++) {
+            for (int rgb = 0; rgb < RGB; rgb++) {
+                pTemp[qrtr][pxl][rgb] = pQuarter[pxl][rgb];
+            }
+        }
+        qrtr++;
+    }
+
+    int pxl, row = 0;
+    qrtr = 0;
+    for (int i = 0; i < SIZE; i++) {    // Bug: (i) is too large to multiply with pxl!
+        // we might use a variable for the current row
+        if (i == SIZE / 2) {
+            row = 0;
+            qrtr += 2;
+        }
+        pxl = row * sqrt(quarterSize);
+        for (int j = 0; j < SIZE; j++) {
+            if (j == SIZE / 2){
+                qrtr++;
+                pxl = row * sqrt(quarterSize);
+            }
+            for (int rgb = 0; rgb < RGB; rgb++) {
+                img[i][j][rgb] = pTemp[qrtr][pxl][rgb];
+            }
+            pxl++;
+        }
+        qrtr--;
+        row++;
     }
 }
