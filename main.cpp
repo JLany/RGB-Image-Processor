@@ -20,7 +20,7 @@ void enlargeFilter();       // 8
 
 
 void rotate90();
-void extractQuarter(unsigned char ** &, char);
+void extractQuarter(unsigned char * * &, char);
 
 
 int main() {
@@ -124,8 +124,8 @@ void rotate90() {
 
 void enlargeFilter() {
     char quarter;
-    unsigned char **pQuarter;
     int quarterSize = SIZE * SIZE / 4;
+    unsigned char * *pQuarter;
     pQuarter = new unsigned char * [quarterSize];
     for (int i = 0; i < quarterSize; i++) {
         pQuarter[i] = new unsigned char[RGB];
@@ -145,10 +145,11 @@ void enlargeFilter() {
             s++;
         }
     }
+    delete[] pQuarter;
 }
 
 
-void extractQuarter(unsigned char ** &ptr, char quarter) {
+void extractQuarter(unsigned char * * &ptr, char quarter) {
     int startRow = 0, endRow = SIZE / 2, startCol = 0, endCol = SIZE / 2;
     switch (quarter) {
         case '1':
