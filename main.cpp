@@ -15,6 +15,8 @@ void writeImage();
 
 void invertFilter();        // 2
 
+void rotate90();
+
 
 int main() {
     char userInput;
@@ -29,6 +31,9 @@ int main() {
             case '2':
                 invertFilter();
                 printf("Image inverted.\n");
+                break;
+            case '5':
+                rotate90();
                 break;
             case 's':
                 writeImage();
@@ -67,6 +72,41 @@ void invertFilter() {
         for (int j = 0; j < SIZE; j++) {
             for (int k = 0; k < RGB; k++) {
                 img[i][j][k] = 255 - img[i][j][k];
+            }
+        }
+    }
+}
+
+
+void rotateFilter() {
+    int angle;
+    printf("Rotate (90), (180), (270) or (360) degrees?\n");
+    if (angle == 360 || angle == 270 || angle == 180 || angle == 90) {
+        for (int i = 0; i < angle / 90; i++) {
+            rotate90();
+        }
+    }
+    else {
+        cout << "Unrecognized angle! Please try again\n";
+        return rotateFilter();
+    }
+}
+
+
+void rotate90() {
+    unsigned char tempImg[SIZE][SIZE][RGB];
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            for (int k = 0; k < RGB; k++) {
+                tempImg[i][j][k] = img[i][j][k];
+            }
+        }
+    }
+
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            for (int k = 0; k < RGB; k++) {
+                img[j][i][k] = tempImg[i][j][k];
             }
         }
     }
