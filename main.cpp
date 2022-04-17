@@ -4,6 +4,15 @@
 using namespace std;
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
-    return 0;
+    char userInput;
+    cout << "Welcome Habibi!\n";
+    // read image
+    while (true) {
+        cin >> userInput;
+        switch (userInput) {
+            case '0': cout << "Good Bye!";
+                return 0;
+            default: cout << "Invalid Input! Try Again.";
+        }
+    }
 }
