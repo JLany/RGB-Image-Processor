@@ -1,5 +1,4 @@
 #include <iostream>
-#include <cmath>
 #include <string>
 #include <cstring>
 #include <algorithm>
@@ -14,6 +13,10 @@ void writeImage();
 
 
 void invertFilter();        // 2
+void rotateFilter();        // 5
+
+
+
 
 void rotate90();
 
