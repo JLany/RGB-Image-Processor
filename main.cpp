@@ -227,8 +227,7 @@ void shuffleFilter() {
 
     int pxl, row = 0;
     qrtr = 0;
-    for (int i = 0; i < SIZE; i++) {    // Bug: (i) is too large to multiply with pxl!
-        // we might use a variable for the current row
+    for (int i = 0; i < SIZE; i++) {
         if (i == SIZE / 2) {
             row = 0;
             qrtr += 2;
