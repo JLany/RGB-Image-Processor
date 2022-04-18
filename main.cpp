@@ -325,14 +325,30 @@ void shuffleFilter() {
     }
 
     printf("New order of quarters ?\n");
-    cin.ignore();
-    getline(cin, newOrder);
+    while (true) {
+        int i = 0;
+        cin.ignore();
+        getline(cin, newOrder);
+        for (i = 0; i < newOrder.length(); i++) {
+            if (newOrder[i] == ' ') {
+                newOrder.erase(remove(newOrder.begin(), newOrder.end(), newOrder[i]));
+            }
+            if (newOrder[i] < '1' || newOrder[i] > '4') {
+                break;
+            }
+        }
+        if (i < newOrder.length()) {
+            printf("Wrong Input!\n");
+            continue;
+        }
+        if (newOrder.length() == 4) {
+            break;
+        }
+            printf("Wrong Input!\n");
+    }
 
     qrtr = 0;
     for (int i = 0; i < newOrder.length(); i++) {
-        if (newOrder[i] == ' ') {
-            continue;
-        }
         extractQuarter(pQuarter, newOrder[i]);
         for (int pxl = 0; pxl < quarterSize; pxl++) {
             for (int rgb = 0; rgb < RGB; rgb++) {
