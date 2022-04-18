@@ -312,6 +312,8 @@ void shuffleFilter() {
     int quarterSize = SIZE * SIZE / 4;
     string newOrder;
     // Initialize a 3D dynamic temp-array
+    // divided into 4 quarters, each is
+    // a 2D dynamic array
     unsigned char * * * pTemp;
     pTemp = new unsigned char * * [4];
     for (int i = 0; i < 4; i++) {
