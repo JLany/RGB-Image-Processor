@@ -11,11 +11,14 @@ unsigned char img[SIZE][SIZE][RGB];
 
 void readImage();
 void writeImage();
-
-
+void bwFilter();            // 1
 void invertFilter();        // 2
+
+void flipFilter();          // 4
 void rotateFilter();        // 5
+void edgeFilter();          // 7
 void enlargeFilter();       // 8
+void mirrorFilter();        // a
 void shuffleFilter();       // b
 
 
@@ -35,16 +38,33 @@ int main() {
 
         cin >> userInput;
         switch (userInput) {
+            case '1':
+                bwFilter();
+                printf("Black and white complete\n");
+                break;
             case '2':
                 invertFilter();
                 printf("Image inverted.\n");
                 break;
+            case '4':
+                flipFilter();
+                printf("Image flipped.\n");
+                break;
             case '5':
                 rotateFilter();
+                printf("Image rotated.\n");
+                break;
+            case '7':
+                edgeFilter();
+                printf("Edges detected.\n");
                 break;
             case '8':
                 enlargeFilter();
                 printf("Image enlarged.\n");
+                break;
+            case 'a':
+                mirrorFilter();
+                printf("Image mirrored.\n");
                 break;
             case 'b':
                 shuffleFilter();
@@ -53,7 +73,8 @@ int main() {
             case 's':
                 writeImage();
                 printf("Save completed.\n");
-                break;
+                sleep(1);
+                return main();
             case '0':
                 printf("Good Bye!");
                 return 0;
@@ -81,6 +102,18 @@ void writeImage() {
 }
 
 
+void bwFilter() {
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            for (int k = 0; k < RGB; k++) {         //loop over every color in each pixel
+                if (img[i][j][RGB] > 127)           // if the value of RGB is > 127
+                    img[i][j][k] = 255;             // change to white (255)
+                else
+                    img[i][j][k] = 0;               // else change to black (0)
+            }
+        }
+    }
+}
 
 void invertFilter() {
     for (int i = 0; i < SIZE; i++) {
@@ -92,6 +125,28 @@ void invertFilter() {
     }
 }
 
+
+void flipFilter() {
+    string flip;
+    printf("h to flip horizontally, v to flip vertically: ");
+    cin >> flip;                // get user input for flip direction.
+    if (flip == "h") {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE / 2; j++) {
+                swap(img[i][j], img[i][SIZE - 1 - j]);         //flip each pixel with it's corresponding horizontal pixel
+            }
+        }
+    } else if (flip == "v") {
+        for (int i = 0; i < SIZE / 2; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                swap(img[i][j], img[SIZE - 1 - i][j]);         //flip each pixel with it's corresponding vertical pixel 
+            }
+        }
+    } else {
+        printf("Invalid input, Please try again\n");
+        return flipFilter();                                   // recursion in case of invalid input
+    }
+}
 
 void rotateFilter() {
     int angle;
@@ -127,6 +182,19 @@ void rotate90() {
     }
 }
 
+void edgeFilter() {
+    bwFilter();
+    for (int i = 0;i < SIZE;i++) {
+        for (int j = 0;j < SIZE;j++) {
+            for (int k = 0; k < RGB; k++) {         //loop over each color of each pixel
+                if (img[i][j][k] != img[i][j + 1][k] || img[i][j][k] != img[i + 1][j][k])   // if pixel is not the same value as the next horizontal or vetrical pixel
+                    img[i][j][k] = 0;                           // make it black
+                else
+                    img[i][j][k] = 255;                         // make it white
+            }
+        }
+    }
+}
 
 void enlargeFilter() {
     char quarter;
@@ -187,6 +255,51 @@ void extractQuarter(unsigned char * * &ptr, char quarter) {
     }
 }
 
+void mirrorFilter() {
+    string mirrorInput;
+    printf("1- to Mirror Left half, 2- to Mirror Right half\n3- to Mirror Upper half, 4- to Mirror Lower half\n");
+    cin >> mirrorInput;
+    if (mirrorInput == "1") {                           //left half mirror
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = SIZE / 2; j < SIZE; j++) {     //loop over right half
+                for (int k = 0; k < RGB; k++) {
+                    img[i][j][k] = img[i][SIZE - 1 - j][k];            //change every pixel of right half to the opposite half
+                }
+            }
+        }
+    }
+    else if (mirrorInput == "2") {                  //right half mirror
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < (SIZE / 2); j++) {    //loop over left half
+                for (int k = 0; k < RGB; k++) {
+                    img[i][j][k] = img[i][SIZE - 1 - j][k];          //change every pixel to its opposite half
+                }
+            }
+        }
+    }
+    else if (mirrorInput == "3") {                  //upper half mirror
+        for (int i = SIZE / 2; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {        //loop over lower half
+                for (int k = 0; k < RGB; k++) {
+                    img[i][j][k] = img[SIZE - 1 - i][j][k];        //change every pixel to its opposite half
+                }
+            }
+        }
+    }
+    else if (mirrorInput == "4") {                  //lower half mirror
+        for (int i = 0;i < (SIZE / 2);i++) {
+            for (int j = 0;j < SIZE;j++) {          //loop over upper half
+                for (int k = 0; k < RGB; k++) {
+                    img[i][j][k] = img[SIZE - 1 - i][j][k];    //change every pixel to its opposite half
+                }
+            }
+        }
+    }
+    else {
+        printf("Invalid input. Please try again\n");
+        return mirrorFilter();
+    }
+}
 
 void shuffleFilter() {
     int quarterSize = SIZE * SIZE / 4;
