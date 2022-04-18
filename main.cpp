@@ -219,6 +219,10 @@ void enlargeFilter() {
             pxl++;
         }
     }
+    // Cleaning
+    for (int i = 0; i < quarterSize; i++) {
+        delete[] pQuarter[i];
+    }
     delete[] pQuarter;
 }
 
@@ -359,4 +363,16 @@ void shuffleFilter() {
         qrtr--;
         row++;
     }
+    // Cleaning
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < quarterSize; j++) {
+            delete[] pTemp[i][j];
+        }
+        delete[] pTemp[i];
+    }
+    delete[] pTemp;
+    for (int i = 0; i < quarterSize; i++) {
+        delete[] pQuarter[i];
+    }
+    delete[] pQuarter;
 }
