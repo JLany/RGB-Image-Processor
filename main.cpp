@@ -120,7 +120,7 @@ void invertFilter() {
         for (int j = 0; j < SIZE; j++) {
             for (int k = 0; k < RGB; k++) {
                 img[i][j][k] = 255 - img[i][j][k];
-            }
+            }   // Invert each color in each pixel
         }
     }
 }
@@ -169,16 +169,16 @@ void rotate90() {
         for (int j = 0; j < SIZE; j++) {
             for (int k = 0; k < RGB; k++) {
                 tempImg[i][j][k] = img[i][j][k];
-            }
+            }   // Store image into a temp
         }
     }
-
+    // Store temp into original image (rotated)
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j < SIZE; j++) {
             for (int k = 0; k < RGB; k++) {
                 img[j][i][k] = tempImg[i][j][k];
-            }
-        }
+            }   // by putting each row into a column
+        }       // (top-down -> right left)
     }
 }
 
@@ -199,23 +199,26 @@ void edgeFilter() {
 void enlargeFilter() {
     char quarter;
     int quarterSize = SIZE * SIZE / 4;
+    // Initialize a 2D dynamic array to hold a quarter
     unsigned char * * pQuarter;
     pQuarter = new unsigned char * [quarterSize];
     for (int i = 0; i < quarterSize; i++) {
         pQuarter[i] = new unsigned char[RGB];
+        // each pointer points to [array of colors (RGB)] in the pixel
     }
     printf("Which quarter to enlarge 1, 2, 3 or 4?\n");
     cin >> quarter;
     extractQuarter(pQuarter, quarter);
-    int pxl = 0;
+    int pxl = 0; // quarter-pointer iterator
+    // Store the extracted quarter into the original image (enlarged)
     for (int i = 0; i < SIZE; i += 2) {
         for (int j = 0; j < SIZE; j += 2) {
-            for (int rgb = 0; rgb < RGB; rgb++) {
+            for (int rgb = 0; rgb < RGB; rgb++) { // rgb: color iterator
                 img[i][j][rgb] = pQuarter[pxl][rgb];
                 img[i + 1][j][rgb] = pQuarter[pxl][rgb];
                 img[i][j + 1][rgb] = pQuarter[pxl][rgb];
                 img[i + 1][j + 1][rgb] = pQuarter[pxl][rgb];
-            }
+            }   // by putting each single pixel into 4 pixels
             pxl++;
         }
     }
@@ -248,12 +251,12 @@ void extractQuarter(unsigned char * * &ptr, char quarter) {
             break;
         default: printf("Unrecognized Quarter!");
     }
-    int pxl = 0;
+    int pxl = 0; // pointer iterator
     for (int i = startRow; i < endRow; i++) {
         for (int j = startCol; j < endCol; j++) {
             for (int rgb = 0; rgb < RGB; rgb++) {
                 ptr[pxl][rgb] = img[i][j][rgb];
-            }
+            }   // Storing a quarter of the image into the quarter-pointer
             pxl++;
         }
     }
@@ -307,8 +310,8 @@ void mirrorFilter() {
 
 void shuffleFilter() {
     int quarterSize = SIZE * SIZE / 4;
-    int qrtr;
     string newOrder;
+    // Initialize a 3D dynamic temp-array
     unsigned char * * * pTemp;
     pTemp = new unsigned char * * [4];
     for (int i = 0; i < 4; i++) {
@@ -317,67 +320,72 @@ void shuffleFilter() {
             pTemp[i][j] = new unsigned char [RGB];
         }
     }
-
+    // Initialize a 2D dynamic array to hold a quarter
     unsigned char * * pQuarter;
     pQuarter = new unsigned char * [quarterSize];
     for (int i = 0; i < quarterSize; i++) {
         pQuarter[i] = new unsigned char[RGB];
     }
-
+    // take new order from user, and make sure it's valid
     printf("New order of quarters ?\n");
     while (true) {
         int i = 0;
-        cin.ignore();
+        cin.ignore(); // for getline() to work properly
         getline(cin, newOrder);
-        for (i = 0; i < newOrder.length(); i++) {
-            if (newOrder[i] == ' ') {
-                newOrder.erase(remove(newOrder.begin(), newOrder.end(), newOrder[i]));
-            }
+        // remove any spaces
+        newOrder.erase(remove(newOrder.begin(), newOrder.end(), ' '), newOrder.end());
+        for (i = 0; i < newOrder.length(); i++) { // loop on the input
             if (newOrder[i] < '1' || newOrder[i] > '4') {
-                break;
+                break; // if other than {1,2,3,4} (1)
             }
         }
         if (i < newOrder.length()) {
             printf("Wrong Input!\n");
-            continue;
+            continue; // (1) retake input
         }
         if (newOrder.length() == 4) {
-            break;
-        }
-            printf("Wrong Input!\n");
+            break; // if passed all check if it's 4 quarters
+        }          // if so, break
+        printf("Wrong Input!\n");
     }
 
-    qrtr = 0;
-    for (int i = 0; i < newOrder.length(); i++) {
+    int qrtr = 0; // quarter indicator
+    for (int i = 0; i < newOrder.length(); i++) { // Take a quarter each iteration
         extractQuarter(pQuarter, newOrder[i]);
-        for (int pxl = 0; pxl < quarterSize; pxl++) {
-            for (int rgb = 0; rgb < RGB; rgb++) {
+        for (int pxl = 0; pxl < quarterSize; pxl++) { // pxl: loops on each
+            for (int rgb = 0; rgb < RGB; rgb++) {     // pixel in the quarter
                 pTemp[qrtr][pxl][rgb] = pQuarter[pxl][rgb];
-            }
+            }   // Store extracted-quarter into a quarter of temp
         }
-        qrtr++;
+        qrtr++; // move to next quarter of temp
     }
 
+    // This process stores the 3D dynamic temp-array into original image (2D)
     int pxl, row = 0;
     qrtr = 0;
-    for (int i = 0; i < SIZE; i++) {
+    for (int i = 0; i < SIZE; i++) { // loop over original image
         if (i == SIZE / 2) {
-            row = 0;
-            qrtr += 2;
+            row = 0;   // When half is reached (vertically)
+            qrtr += 2; // move quarter indicator to 3rd quarter
         }
         pxl = row * sqrt(quarterSize);
         for (int j = 0; j < SIZE; j++) {
-            if (j == SIZE / 2){
-                qrtr++;
+            if (j == SIZE / 2){  // When half is reached (horizontally)
+                qrtr++;          // move quarter indicator to next quarter
                 pxl = row * sqrt(quarterSize);
-            }
+                // this indicates the position of pxl
+                // according to current reached row
+                // so pxl doesn't get lost while
+            }   // going back and forth through quarters
+
             for (int rgb = 0; rgb < RGB; rgb++) {
                 img[i][j][rgb] = pTemp[qrtr][pxl][rgb];
+                // Store current pixel into image
             }
             pxl++;
         }
-        qrtr--;
-        row++;
+        qrtr--; // go back to previous quarter
+        row++;  // and move to next row
     }
     // Cleaning
     for (int i = 0; i < 4; i++) {
