@@ -1,3 +1,12 @@
+// FCAI - Programming 1 - 2022 - Assignment 3
+// Program Name: Gray-Scale-Image-Processor.cpp
+// Last Modification Date: Apr 5, 2022
+// Author1 and ID and Group: Mahmoud Adel  | 20210563 | S25
+// Author2 and ID and Group: Maya Ayman    | 20210508 | S25
+// Author3 and ID and Group: Yousef Kilany | 20210544 | S25
+// Teaching Assistant: Eng. Mohamed Fateaha 
+// Purpose: This program processes images taken from the user, in many different ways.
+
 #include <iostream>
 #include <string>
 #include <cstring>
