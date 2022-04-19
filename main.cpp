@@ -11,15 +11,18 @@ unsigned char img[SIZE][SIZE][RGB];
 
 void readImage();
 void writeImage();
-void bwFilter();            // 1
-void invertFilter();        // 2
-
-void flipFilter();          // 4
-void rotateFilter();        // 5
-void edgeFilter();          // 7
-void enlargeFilter();       // 8
-void mirrorFilter();        // a
-void shuffleFilter();       // b
+void bwFilter();                     // 1
+void invertFilter();                 // 2
+void mergeFilter();                  // 3
+void flipFilter();                   // 4
+void rotateFilter();                 // 5
+void darkenAndLightenFilter();       // 6
+void edgeFilter();                   // 7
+void enlargeFilter();                // 8
+void shrinkFilter();                 // 9
+void mirrorFilter();                 // a
+void shuffleFilter();                // b
+void blurFilter();                   // c
 
 
 
@@ -46,6 +49,10 @@ int main() {
                 invertFilter();
                 printf("Image inverted.\n");
                 break;
+            case '3':
+                mergeFilter();
+                printf("Images merged.\n");
+                break;
             case '4':
                 flipFilter();
                 printf("Image flipped.\n");
@@ -53,6 +60,10 @@ int main() {
             case '5':
                 rotateFilter();
                 printf("Image rotated.\n");
+                break;
+            case '6':
+                darkenAndLightenFilter();
+                printf("Image has been lightened/darkened");
                 break;
             case '7':
                 edgeFilter();
@@ -62,6 +73,10 @@ int main() {
                 enlargeFilter();
                 printf("Image enlarged.\n");
                 break;
+            case '9':
+                shrinkFilter();
+                printf("Image shrunk. \n");
+                break;
             case 'a':
                 mirrorFilter();
                 printf("Image mirrored.\n");
@@ -69,6 +84,10 @@ int main() {
             case 'b':
                 shuffleFilter();
                 printf("Image shuffled.\n");
+                break;
+            case 'c':
+                blurFilter();
+                printf("Image blurred.\n");
                 break;
             case 's':
                 writeImage();
@@ -125,6 +144,24 @@ void invertFilter() {
     }
 }
 
+void mergeFilter(){
+    // Takes the name of the image to be merged with the current one
+    char imageName2[100];
+    unsigned char img2[SIZE][SIZE][RGB];
+    cout << "Please enter name of the image to merge: " << endl;
+    cin >> imageName2;
+    strcat(imageName2, ".bmp");
+    readRGBBMP(imageName2, img2);
+
+    // Merges the 2 images
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            for (int k = 0; k < RGB; ++k) {
+                img[i][j][k] = (img[i][j][k] + img2[i][j][k]) / 2;
+            }
+        }
+    }
+}
 
 void flipFilter() {
     string flip;
@@ -160,6 +197,31 @@ void rotateFilter() {
         cout << "Unrecognized angle! Please try again\n";
         return rotateFilter();
     }
+}
+
+void darkenAndLightenFilter() {
+    string rspns;
+    cout << "Do you want to lighten or darken the image? " << endl;
+    cin >> rspns;
+    transform(rspns.begin(), rspns.end(), rspns.begin(), ::tolower);
+    // Lightens an image
+    if (rspns == "lighten")
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                for (int k = 0; k < RGB; ++k) {
+                    (img[i][j][k] * 1.5 > 255) ? img[i][j][k] = 255 : img[i][j][k] += 0.5 * img[i][j][k];
+                }
+            }
+        }
+        // Darkens an image
+    else if (rspns == "darken")
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                for (int k = 0; k < RGB; ++k) {
+                    img[i][j][k] /= 2;
+                }
+            }
+        }
 }
 
 
@@ -229,6 +291,30 @@ void enlargeFilter() {
     delete[] pQuarter;
 }
 
+void shrinkFilter(){
+    int shrinkFactor, x = 0, y = 0, z = 0;
+    cout << "By which factor do you want to shrink the image: 2, 3, or 4?" << endl;
+    cin >> shrinkFactor;
+    unsigned char newImg[SIZE][SIZE][RGB] = {{0}};   //creating a new array to store the shrunk image
+    for (int i = 0; i < SIZE; i += shrinkFactor) {
+        for (int j = 0; j < SIZE; j += shrinkFactor) {
+            for (int k = 0; k < RGB; k++) {
+                newImg[x][y][z++] = img[i][j][k];
+            }
+        }
+        x++;
+        y++;
+        y = 0;
+        z = 0;
+    }
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            for (int k = 0; k < RGB; ++k) {
+                img[i][j][k] = newImg[i][j][k];
+            }
+        }
+    }
+}
 
 void extractQuarter(unsigned char * * &ptr, char quarter) {
     int startRow = 0, endRow = SIZE / 2, startCol = 0, endCol = SIZE / 2;
@@ -305,6 +391,69 @@ void mirrorFilter() {
     else {
         printf("Invalid input. Please try again\n");
         return mirrorFilter();
+    }
+}
+
+void blurFilter(){
+    int avg, sum = 0;
+    // Calculates average of each 8 subsequent pixels and assigns this value to each pixel of the 8 in a column
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; j++) {
+            if (j <= 247) {
+                for (int k = 0; k < RGB; ++k) {
+                    for (int r = 0; r < 8; ++r) {
+                        sum += img[i][j + r][k];
+                    }
+                    avg = sum/8;
+                    img[i][j][k] = avg;
+                    sum = 0;
+                }
+            } else {
+                for (int k = 0; k < RGB; ++k) {
+                    for (int l = 0; l < SIZE - j; ++l) {
+                        sum += img[i][j + l][k];
+                    }
+                    avg = sum/8;
+                    img[i][j][k] = avg;
+                    sum = 0;
+                    for (int l = 0; l < SIZE - j; ++l) {
+                        img[i][j][k] = avg;
+                    }
+               }
+                break;
+            }
+        }
+    }
+    // Calculates average of each 8 subsequent pixels and assigns this value to each pixel of the 8 in a row
+    for (int i = 0; i < SIZE; ++i) {
+        if (i <= 247) {
+            for (int j = 0; j < SIZE; j++) {
+                for (int k = 0; k < RGB; ++k) {
+                    for (int r = 0; r < 8; ++r) {
+                        sum += img[i + r][j][k];
+                    }
+                    avg = sum / 8;
+                    img[i][j][k] = avg;
+                    sum = 0;
+                }
+            }
+        }
+        else {
+            for (int j = 0; j < SIZE; j++){
+                for (int k = 0; k < RGB; ++k) {
+                    for (int l = 0; l < SIZE - i; ++l) {
+                        sum += img[i+l][j][k];
+                    }
+                    avg = sum/8;
+                    img[i][j][k] = avg;
+                    sum = 0;
+                    for (int l = 0; l < SIZE - i; ++l) {
+                        img[i][j][k] = avg;
+                    }
+                }
+            }
+            break;
+        }
     }
 }
 
