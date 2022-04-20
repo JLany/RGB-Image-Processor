@@ -133,12 +133,16 @@ void writeImage() {
 void bwFilter() {
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j < SIZE; j++) {
-            for (int k = 0; k < RGB; k++) {         //loop over every color in each pixel
-                if (img[i][j][RGB] > 127)           // if the value of RGB is > 127
-                    img[i][j][k] = 255;             // change to white (255)
-                else
-                    img[i][j][k] = 0;               // else change to black (0)
+            float avg = (img[i][j][0] + img[i][j][1] + img[i][j][2]) / 3;       //calculate avg pixel color
+            if (avg > 127) {                                                    // if the value of avg is > 127
+                for (int k = 0; k < RGB; k++)                                   //loop over every color in each pixel
+                    img[i][j][k] = 255;                                         // change to white (255)
             }
+            else {
+                for (int k = 0; k < RGB; k++)
+                    img[i][j][k] = 0;                                           // else change to black (0)
+            }
+            
         }
     }
 }
