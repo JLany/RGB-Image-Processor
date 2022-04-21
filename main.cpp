@@ -426,10 +426,10 @@ void blurFilter(){
                     img[i][j][k] = avg;
                     sum = 0;
                     for (int l = 0; l < SIZE - j; ++l) {
-                        img[i][j][k] = avg;
-                    }
-               }
-                break;
+                        img[i][j][k] = avg; // img[i][j + l][k] = avg
+                    }   // this loop is useless because
+               }        // it does the same thing again and again
+                break;  // How could we make it useful?
             }
         }
     }
@@ -457,10 +457,10 @@ void blurFilter(){
                     img[i][j][k] = avg;
                     sum = 0;
                     for (int l = 0; l < SIZE - i; ++l) {
-                        img[i][j][k] = avg;
-                    }
-                }
-            }
+                        img[i][j][k] = avg; // img[i + l][j][k] = avg
+                    }   // this loop is useless because
+                }       // it does the same thing again and again
+            }           // how could we make it useful?
             break;
         }
     }
