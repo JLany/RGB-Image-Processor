@@ -72,7 +72,7 @@ int main() {
                 break;
             case '6':
                 darkenAndLightenFilter();
-                printf("Image has been lightened/darkened");
+                printf("Image has been lightened/darkened.\n");
                 break;
             case '7':
                 edgeFilter();
@@ -201,6 +201,7 @@ void flipFilter() {
 void rotateFilter() {
     int angle;
     printf("Rotate (90), (180), (270) or (360) degrees?\n");
+    cin >> angle;
     if (angle == 360 || angle == 270 || angle == 180 || angle == 90) {
         for (int i = 0; i < angle / 90; i++) {
             rotate90();
@@ -235,6 +236,11 @@ void darkenAndLightenFilter() {
                 }
             }
         }
+    else
+    {
+        cout << "Invalid choice. Please choose a valid option: ";
+        return darkenAndLightenFilter();
+    }
 }
 
 
@@ -310,33 +316,40 @@ void shrinkFilter(){
     cin >> shrinkFactor;
     unsigned char newImg[SIZE][SIZE][RGB];   //creating a new array to store the shrunk image
 
-    for (int i = 0; i < SIZE; ++i) {
-        for (int j = 0; j < SIZE; ++j) {
-            for (int k = 0; k < RGB; ++k) {
-                newImg[i][j][k] = 255;
+    if (shrinkFactor == 2 || shrinkFactor == 3 || shrinkFactor == 4) {
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                for (int k = 0; k < RGB; ++k) {
+                    newImg[i][j][k] = 255;
+                }
             }
         }
-    }
 
-    // Shrinking the image by removing some pixels according to the shrink factor
-    for (int i = 0; i < SIZE; i += shrinkFactor) {
-        for (int j = 0; j < SIZE; j += shrinkFactor) {
-            for (int k = 0; k < RGB; k++) {
-                newImg[x][y][z++] = img[i][j][k];
+        // Shrinking the image by removing some pixels according to the shrink factor
+        for (int i = 0; i < SIZE; i += shrinkFactor) {
+            for (int j = 0; j < SIZE; j += shrinkFactor) {
+                for (int k = 0; k < RGB; k++) {
+                    newImg[x][y][z++] = img[i][j][k];
+                }
+            }
+            x++;
+            y++;
+            y = 0;
+            z = 0;
+        }
+        // Putting the new shrunk image in the old array
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 0; j < SIZE; ++j) {
+                for (int k = 0; k < RGB; ++k) {
+                    img[i][j][k] = newImg[i][j][k];
+                }
             }
         }
-        x++;
-        y++;
-        y = 0;
-        z = 0;
     }
-    // Putting the new shrunk image in the old array
-    for (int i = 0; i < SIZE; ++i) {
-        for (int j = 0; j < SIZE; ++j) {
-            for (int k = 0; k < RGB; ++k) {
-                img[i][j][k] = newImg[i][j][k];
-            }
-        }
+    else
+    {
+        cout << "Please enter a valid shrink factor: ";
+        return shrinkFilter();
     }
 }
 
