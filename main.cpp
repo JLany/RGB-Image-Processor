@@ -213,6 +213,25 @@ void rotateFilter() {
     }
 }
 
+void rotate90() {
+    unsigned char tempImg[SIZE][SIZE][RGB];
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            for (int k = 0; k < RGB; k++) {
+                tempImg[i][j][k] = img[i][j][k];
+            }   // Store image into a temp
+        }
+    }
+    // Store temp into original image (rotated)
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            for (int k = 0; k < RGB; k++) {
+                img[j][SIZE-1-i][k] = tempImg[i][j][k];
+            }   // by putting each row into a column
+        }       // (top-down -> right left)
+    }
+}
+
 void darkenAndLightenFilter() {
     string rspns;
     cout << "Do you want to lighten or darken the image? " << endl;
@@ -240,26 +259,6 @@ void darkenAndLightenFilter() {
     {
         cout << "Invalid choice. Please choose a valid option: ";
         return darkenAndLightenFilter();
-    }
-}
-
-
-void rotate90() {
-    unsigned char tempImg[SIZE][SIZE][RGB];
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
-            for (int k = 0; k < RGB; k++) {
-                tempImg[i][j][k] = img[i][j][k];
-            }   // Store image into a temp
-        }
-    }
-    // Store temp into original image (rotated)
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
-            for (int k = 0; k < RGB; k++) {
-                img[SIZE-1-j][i][k] = tempImg[i][j][k];
-            }   // by putting each row into a column
-        }       // (top-down -> right left)
     }
 }
 
