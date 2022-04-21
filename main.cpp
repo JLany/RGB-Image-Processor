@@ -251,7 +251,7 @@ void rotate90() {
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j < SIZE; j++) {
             for (int k = 0; k < RGB; k++) {
-                img[j][i][k] = tempImg[i][j][k];
+                img[SIZE-1-j][i][k] = tempImg[i][j][k];
             }   // by putting each row into a column
         }       // (top-down -> right left)
     }
