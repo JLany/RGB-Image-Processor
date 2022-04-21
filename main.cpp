@@ -41,6 +41,8 @@ void extractQuarter(unsigned char * * &, char);
 
 
 int main() {
+    // NOTE: The program loops on the same picture until saved, The user can apply multiple filters on the same picture.
+    // The program asks for a new picture only after the user save the previous picture.
     char userInput;
     printf("Welcome Habibi!\n");
     readImage();
