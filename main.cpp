@@ -226,7 +226,7 @@ void darkenAndLightenFilter() {
                 }
             }
         }
-        // Darkens an image
+    // Darkens an image
     else if (rspns == "darken")
         for (int i = 0; i < SIZE; ++i) {
             for (int j = 0; j < SIZE; ++j) {
@@ -308,7 +308,17 @@ void shrinkFilter(){
     int shrinkFactor, x = 0, y = 0, z = 0;
     cout << "By which factor do you want to shrink the image: 2, 3, or 4?" << endl;
     cin >> shrinkFactor;
-    unsigned char newImg[SIZE][SIZE][RGB] = {{0}};   //creating a new array to store the shrunk image
+    unsigned char newImg[SIZE][SIZE][RGB];   //creating a new array to store the shrunk image
+
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            for (int k = 0; k < RGB; ++k) {
+                newImg[i][j][k] = 255;
+            }
+        }
+    }
+
+    // Shrinking the image by removing some pixels according to the shrink factor
     for (int i = 0; i < SIZE; i += shrinkFactor) {
         for (int j = 0; j < SIZE; j += shrinkFactor) {
             for (int k = 0; k < RGB; k++) {
@@ -320,6 +330,7 @@ void shrinkFilter(){
         y = 0;
         z = 0;
     }
+    // Putting the new shrunk image in the old array
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
             for (int k = 0; k < RGB; ++k) {
@@ -412,7 +423,7 @@ void blurFilter(){
     // Calculates average of each 8 subsequent pixels and assigns this value to each pixel of the 8 in a column
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; j++) {
-            if (j <= 247) {
+            if (j <= 247) {                         // makes sure the index doesn't go beyond 255
                 for (int k = 0; k < RGB; ++k) {
                     for (int r = 0; r < 8; ++r) {
                         sum += img[i][j + r][k];
@@ -430,16 +441,16 @@ void blurFilter(){
                     img[i][j][k] = avg;
                     sum = 0;
                     for (int l = 0; l < SIZE - j; ++l) {
-                        img[i][j][k] = avg; // img[i][j + l][k] = avg
-                    }   // this loop is useless because
-               }        // it does the same thing again and again
-                break;  // How could we make it useful?
+                        img[i][j + l][k] = avg;
+                    }
+               }
+                break;
             }
         }
     }
     // Calculates average of each 8 subsequent pixels and assigns this value to each pixel of the 8 in a row
     for (int i = 0; i < SIZE; ++i) {
-        if (i <= 247) {
+        if (i <= 247) {                         // makes sure the index doesn't go beyond 255
             for (int j = 0; j < SIZE; j++) {
                 for (int k = 0; k < RGB; ++k) {
                     for (int r = 0; r < 8; ++r) {
@@ -461,10 +472,10 @@ void blurFilter(){
                     img[i][j][k] = avg;
                     sum = 0;
                     for (int l = 0; l < SIZE - i; ++l) {
-                        img[i][j][k] = avg; // img[i + l][j][k] = avg
-                    }   // this loop is useless because
-                }       // it does the same thing again and again
-            }           // how could we make it useful?
+                        img[i + l][j][k] = avg;
+                    }
+                }
+            }
             break;
         }
     }
