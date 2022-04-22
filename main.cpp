@@ -4,7 +4,7 @@
 // Author1 and ID and Group: Mahmoud Adel  | 20210563 | S25
 // Author2 and ID and Group: Maya Ayman    | 20210508 | S25
 // Author3 and ID and Group: Yousef Kilany | 20210544 | S25
-// Teaching Assistant: Eng. Mohamed Fateaha 
+// Teaching Assistant: Eng. Mahmoud Fateaha 
 // Purpose: This program processes images taken from the user, in many different ways.
 
 #include <iostream>
